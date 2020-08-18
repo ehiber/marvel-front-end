@@ -54,8 +54,21 @@ const webpackConfig ={
                 loader: [
                     MiniCSSExtractPlugin.loader,
                     "css-loader",
+                    'resolve-url-loader',
                     'sass-loader'
                 ]
+            },
+            {
+                test: /\.(woff(2)?|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
+                use: [
+                    {
+                        loader: 'file-loader',
+                        options: {
+                            name: '[name].[ext]',
+                            outputPath: 'fonts/'
+                        },
+                    },
+                ],    
             },
             {
                 test: /\.(gif|png|jpe?g|svg)$/i,
@@ -66,7 +79,7 @@ const webpackConfig ={
                         options: {
                             bypassOnDebug: true, // webpack@1.x
                             disable: true, // webpack@2.x and newer
-                            },
+                        },
                     },
                 ],
             }

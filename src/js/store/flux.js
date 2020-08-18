@@ -2,9 +2,19 @@ const getState = ({ getStore, getActions, setStore }) => {
 	
 	return {
 		store: {
-			
+			favorite : false
+
 		},
 		actions: {
+
+			setFavorite : favorite => {
+								
+				setStore({
+					favorite: !favorite
+				});
+
+			}
+
 			// fetchRegisterUser: async newUser => {
 			// 	const store = getStore();
 

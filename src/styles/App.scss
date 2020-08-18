@@ -1,6 +1,33 @@
+@import "fontAwesome/fontawesome.scss";
+@import "fontAwesome/solid.scss";
+@import "fontAwesome/regular.scss";
+
 .App {
     text-align: center;
-    background: red;
-    width: 100px;
-    height: 300px;
+    background: rgb(245, 245, 245); 
+    display: inline block;
+      
   }
+
+.star-solid {
+  @extend %fa-icon;
+  @extend .fas;
+  color: rgb(138, 138, 138); 
+  
+  &::after {
+      content: fa-content($fa-var-star);
+  }
+}
+
+.star-regular {
+  @extend %fa-icon;
+  @extend .far;
+  color: rgb(224, 224, 224); 
+  
+  &::after {
+      content: fa-content($fa-var-star);
+  }
+}
+
+
+  
