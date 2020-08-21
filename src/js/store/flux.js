@@ -1,8 +1,25 @@
 const getState = ({ getStore, getActions, setStore }) => {
 	
+
+	const APIurlMarvelCharacters = "https://gateway.marvel.com:443/v1/public/characters?ts=1&apikey=ae5fdb0f7fe8f2a7848c3a15e561cb85&hash=0750a5e7e851d8e2830a9d35f488eeda"
+	const APIurlMarvelCharactersBySearchPart1  = "https://gateway.marvel.com:443/v1/public/characters?ts=1&nameStartsWith="
+	const APIurlMarvelCharactersBySearchPart2  = "&apikey=ae5fdb0f7fe8f2a7848c3a15e561cb85&hash=0750a5e7e851d8e2830a9d35f488eeda"
+
+
+	// const APIurlMarvelCharacters = "https://gateway.marvel.com:443/v1/public/characters?ts=1&apikey=1a305a0b17d07430e6f861acc1fc6862&hash=5e7b5ab581c0fbe2540ff6eafb0e64a0"
+	// const APIurlMarvelCharactersBySearchPart1  = "https://gateway.marvel.com:443/v1/public/characters?ts=1&nameStartsWith="
+	// const APIurlMarvelCharactersBySearchPart2  = "&apikey=1a305a0b17d07430e6f861acc1fc6862&hash=5e7b5ab581c0fbe2540ff6eafb0e64a0"
+	
 	return {
 		store: {
-			favorite : false
+			
+			characters : [],
+
+			comicsToRender : [],
+			
+			favorite : false,
+
+			inputHeroe : "",
 
 		},
 		actions: {
@@ -13,176 +30,198 @@ const getState = ({ getStore, getActions, setStore }) => {
 					favorite: !favorite
 				});
 
+			},
+
+			setIsFavorite : (localID,isFavorite) => {
+				
+				let store = getStore();
+
+				let newList = 	store.characters.map((character) => {   
+									if (character.localID === localID) {
+										character.isFavorite = isFavorite;
+									}
+
+									return character
+								});
+
+				setStore({
+					characters: newList 
+				});
+
+			},
+
+			setInputHeroe : newInput => {
+
+				setStore({
+					inputHeroe : newInput
+				});
+
+			},
+
+			fetchGetCharacters: async () => {
+				
+				const store = getStore();
+				
+				try {
+					let response = await fetch(APIurlMarvelCharacters, {
+						method: "GET",
+						headers: {
+							"Content-Type": "application/JSON"
+						},
+					});
+					
+					if (response.ok) {
+						
+						let responseBody = await response.json();
+						
+						let responseBodyDATA = responseBody["data"];
+			
+						let characters = responseBodyDATA.results.map((character,index) =>{
+							
+							let newCharacter = {}
+							
+							newCharacter["localID"] = index + 1;
+
+							newCharacter["id"] = character.id;
+
+							newCharacter["name"] = character.name;
+
+							newCharacter["cover"] = character.thumbnail.path + "." + character.thumbnail.extension;
+
+							newCharacter["comics"] = character.comics;
+
+							newCharacter["isFavorite"] = false;
+
+							return newCharacter;
+
+						});
+
+						setStore({ characters: characters });
+
+					} else if (response.stats == 400) {
+						console.log("hubo un error");
+					}
+				} catch (error) {
+					console.log("something failed");
+					console.log(error);
+				}
+			},
+				
+			fetchGetCharactersBySearch: async () => {
+			
+				const store = getStore();
+
+				try {
+					let response = await fetch(APIurlMarvelCharactersBySearchPart1 + store.inputHeroe + APIurlMarvelCharactersBySearchPart2, {
+						method: "GET",
+						headers: {
+							"Content-Type": "application/JSON"
+						},
+					});
+					
+					if (response.ok) {
+						
+						let lengthCharacters = store.characters.length;
+
+						let responseBody = await response.json();
+						
+						let responseBodyDATA = responseBody["data"];
+
+						console.log(responseBodyDATA)
+			
+						responseBodyDATA.results.map((character,index) =>{
+							
+							let newCharacter = {}
+							
+							newCharacter["localID"] = index + 1 + lengthCharacters;
+
+							newCharacter["id"] = character.id;
+
+							newCharacter["name"] = character.name;
+
+							newCharacter["cover"] = character.thumbnail.path + "." + character.thumbnail.extension;
+
+							newCharacter["comics"] = character.comics;
+
+							newCharacter["isFavorite"] = false;
+							
+							let isInStore = store.characters.map( storeCharacter =>{
+								
+								return storeCharacter.id === newCharacter.id
+
+							});
+
+							if (!isInStore.includes(true)){
+
+								setStore({ characters: [...store.characters, newCharacter] });
+
+							} else {
+
+								lengthCharacters--
+
+							}
+
+						});
+							
+					} else if (response.stats == 400) {
+						console.log("hubo un error");
+					}
+				} catch (error) {
+					console.log("something failed");
+					console.log(error);
+				}
+			},
+
+			fetchGetComics: async (url) => {
+				
+				const store = getStore();
+				
+				try {
+					let response = await fetch(url + "?ts=1&apikey=ae5fdb0f7fe8f2a7848c3a15e561cb85&hash=0750a5e7e851d8e2830a9d35f488eeda", {
+						method: "GET",
+						headers: {
+							"Content-Type": "application/JSON"
+						},
+					});
+					
+					if (response.ok) {
+						
+						let responseBody = await response.json();
+						
+						let responseBodyDATA = responseBody["data"];
+			
+						let comicsToRender = responseBodyDATA.results.map((comic,index) =>{
+							
+							let newComic = {}
+							
+							newComic["localID"] = index + 1;
+
+							newComic["id"] = comic.id;
+
+							newComic["title"] = comic.title;
+
+							newComic["cover"] = comic.thumbnail.path + "." + comic.thumbnail.extension;
+
+							newComic["date"] = comic.dates[0].date;
+
+							newComic["description"] = comic.description;
+
+							newComic["creators"] = comic.creators;
+
+							return newComic;
+
+						});
+
+						setStore({ comicsToRender: comicsToRender });
+
+					} else if (response.stats == 400) {
+						console.log("hubo un error");
+					}
+				} catch (error) {
+					console.log("something failed");
+					console.log(error);
+				}
 			}
-
-			// fetchRegisterUser: async newUser => {
-			// 	const store = getStore();
-
-			// 	let successfulRegistration = false;
-
-			// 	try {
-			// 		let response = await fetch(APIurlRegisterUser + newUser["username"], {
-			// 			method: "POST",
-			// 			headers: {
-			// 				"Content-Type": "application/JSON"
-			// 			},
-			// 			body: JSON.stringify(newUser)
-			// 		});
-
-			// 		if (response.ok) {
-			// 			successfulRegistration = true;
-			// 		} else if (response.stats == 400) {
-			// 			console.log("user exists");
-			// 		}
-			// 	} catch (error) {
-			// 		console.log("something failed");
-			// 		console.log(error);
-			// 	}
-
-			// 	setStore({
-			// 		loggedInUser: newUser
-			// 	});
-
-			// 	return successfulRegistration;
-			// },
-
-			// fetchUserLogIn: async (username, password) => {
-			// 	const store = getStore();
-
-			// 	let successfulLogIn = false;
-
-			// 	let body_to_send = {
-			// 		password: password
-			// 	};
-
-			// 	try {
-			// 		let response = await fetch(APIurlLogInUser + username, {
-			// 			method: "POST",
-			// 			headers: {
-			// 				"Content-Type": "application/JSON"
-			// 			},
-			// 			body: JSON.stringify(body_to_send)
-			// 		});
-
-			// 		if (response.status == 200) {
-			// 			let responseBody = await response.json();
-			// 			let responseBodyJSON = JSON.parse(responseBody["user"]);
-
-			// 			setStore({ loggedInUser: responseBodyJSON });
-
-			// 			setStore({
-			// 				isLogIn: true
-			// 			});
-
-			// 			successfulLogIn = true;
-			// 		} else if (response.status == 400) {
-			// 			console.log("CREDENCIALES NO VALIDAS");
-			// 		}
-			// 	} catch (error) {
-			// 		console.log("something failed");
-			// 		console.log(error);
-			// 	}
-
-			// 	return successfulLogIn;
-			// },
-
-			// fetchUserLogOut: () => {
-			// 	const store = getStore();
-
-			// 	setStore({
-			// 		isLogIn: false
-			// 	});
-			// 	setStore({
-			// 		loggedInUser: {}
-			// 	});
-			// },
-
-			// fetchRegisterTournament: async newTornament => {
-			// 	const store = getStore();
-
-			// 	let successfulRegistrationTournament = false;
-
-			// 	try {
-			// 		let response = await fetch(APIurlBaseHandleTournament + store.loggedInUser.id + "/tournaments", {
-			// 			method: "POST",
-			// 			headers: {
-			// 				"Content-Type": "application/JSON"
-			// 			},
-			// 			body: JSON.stringify(newTornament)
-			// 		});
-
-			// 		if (response.ok) {
-			// 			successfulRegistrationTournament = true;
-			// 		} else if (response.stats == 400) {
-			// 			console.log("hubo un error");
-			// 		}
-			// 	} catch (error) {
-			// 		console.log("something failed");
-			// 		console.log(error);
-			// 	}
-
-			// 	setStore({
-			// 		tournaments: [...store.tournaments, newTornament]
-			// 	});
-
-			// 	return successfulRegistrationTournament;
-			// },
-
-			// fetchGetTournaments: async () => {
-			// 	const store = getStore();
-			// 	try {
-			// 		let response = await fetch(APIurlGETTournament, {
-			// 			method: "GET",
-			// 			headers: {
-			// 				"Content-Type": "application/JSON"
-			// 			}
-			// 		});
-
-			// 		if (response.ok) {
-			// 			let responseBody = await response.json();
-
-			// 			let responseBodyJSON = JSON.parse(responseBody["tournaments"]);
-
-			// 			setStore({ tournaments: responseBodyJSON });
-			// 		} else if (response.stats == 400) {
-			// 			console.log("hubo un error");
-			// 		}
-			// 	} catch (error) {
-			// 		console.log("something failed");
-			// 		console.log(error);
-			// 	}
-			// },
-
-			// fetchInscription: async tournamentId => {
-			// 	const store = getStore();
-			// 	let successfulInscriptionTournament = false;
-			// 	let newDate = new Date();
-			// 	try {
-			// 		let response = await fetch(
-			// 			APIurlBaseHandleTournament + store.loggedInUser.id + "/tournaments/" + tournamentId,
-			// 			{
-			// 				method: "POST",
-			// 				headers: {
-			// 					"Content-Type": "application/JSON"
-			// 				},
-			// 				body: JSON.stringify({
-			// 					action: "take part",
-			// 					status: "sin pagar",
-			// 					date_inscription: "2020/3/5"
-			// 				})
-			// 			}
-			// 		);
-			// 		let responsePrueba = response.json;
-			// 		console.log(responsePrueba);
-			// 		if (response.ok) {
-			// 			successfulInscriptionTournament = true;
-			// 		} else if (response.status == 400) {
-			// 			console.log("hubo un error");
-			// 		}
-			// 	} catch (error) {
-			// 		console.log("something failed");
-			// 		console.log(error);
-			// 	}
 		}
 	};
 };

@@ -1,13 +1,14 @@
 @import "fontAwesome/fontawesome.scss";
 @import "fontAwesome/solid.scss";
 @import "fontAwesome/regular.scss";
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100&display=swap');
+
 
 .App {
-    text-align: center;
-    background: rgb(245, 245, 245); 
-    display: inline block;
-      
-  }
+  text-align: center;
+  background: rgb(245, 245, 245); 
+  display: inline block;
+};
 
 .star-solid {
   @extend %fa-icon;
@@ -17,7 +18,7 @@
   &::after {
       content: fa-content($fa-var-star);
   }
-}
+};
 
 .star-regular {
   @extend %fa-icon;
@@ -27,7 +28,6 @@
   &::after {
       content: fa-content($fa-var-star);
   }
-}
+};
 
 
-  

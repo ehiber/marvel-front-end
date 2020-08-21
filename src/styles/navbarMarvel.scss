@@ -1,23 +1,6 @@
 @import "fontAwesome/fontawesome.scss";
 @import "fontAwesome/solid.scss";
 
-.navbar-marvel {
-    display: flex;
-    width: 100%;
-    height: 50px;
-    margin-top: 13px;
-    padding-left: 10px;
-    background-color: white;
-    border-bottom: 2px rgb(235, 235, 235) solid;
-}
-
-.icon-navbar-marvel {
-    width: 100px;
-    height: 80px;
-    margin: -20px 0;
-    padding-right: 20px;
-}
-
 .search {
     @extend %fa-icon;
     @extend .fas;
@@ -27,25 +10,6 @@
     }
 }
 
-.input-heroes {
-    
+form{
     width: 100%;
-    outline: none;
-    height: 30px;
-    margin-right: 50px;
-    padding-left: 20px;
-    border-top: 0ch;
-    border-bottom: 0ch;
-    border-right: 0ch;
-    border-color: rgba(224, 224, 224,0.1);    
-    font-size: medium;      
-}
-
-::placeholder { 
-    color: rgb(224, 224, 224); 
-    
-} 
-
-.icon-favorite {
-    padding: 10px 80px;
 }
