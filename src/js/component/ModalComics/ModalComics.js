@@ -14,6 +14,19 @@ const ModalComics = ({ nameCharacter, handleOuterClick = () => {} }) =>  {
         actions.setComicToRender(index,true)
                         
     }
+
+    const truncateString = (str) => {
+        
+        if (str !== null) {
+            if (str.length > 280) {
+                return str.substr(0, 256) + '...';
+            }
+            
+        }   
+
+        return str;
+
+    }
         
 	return (
 		<Fragment>
@@ -41,7 +54,7 @@ const ModalComics = ({ nameCharacter, handleOuterClick = () => {} }) =>  {
 
                                                 <h3>{comic.title}</h3>
 
-                                                <p>{comic.description}</p>
+                                                <p>{truncateString(comic.description)}</p>
 
                                             </Text>
 
