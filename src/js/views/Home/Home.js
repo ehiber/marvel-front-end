@@ -55,7 +55,7 @@ export const Home = (props) => {
 									name = {character.name}
 									cover = {character.cover}
 									isFavorite = {character.isFavorite}
-									url={character.comics.collectionURI}
+									url={character.comics.collectionURI.replace("http://","https://")}
 								/> 
 							);
 						})
