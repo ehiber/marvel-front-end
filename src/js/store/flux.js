@@ -5,17 +5,14 @@ const getState = ({ getStore, getActions, setStore }) => {
 	const APIurlMarvelCharactersBySearchPart1  = "https://gateway.marvel.com:443/v1/public/characters?ts=1&nameStartsWith="
 	const APIurlMarvelCharactersBySearchPart2  = "&apikey=ae5fdb0f7fe8f2a7848c3a15e561cb85&hash=0750a5e7e851d8e2830a9d35f488eeda"
 
-
-	// const APIurlMarvelCharacters = "https://gateway.marvel.com:443/v1/public/characters?ts=1&apikey=1a305a0b17d07430e6f861acc1fc6862&hash=5e7b5ab581c0fbe2540ff6eafb0e64a0"
-	// const APIurlMarvelCharactersBySearchPart1  = "https://gateway.marvel.com:443/v1/public/characters?ts=1&nameStartsWith="
-	// const APIurlMarvelCharactersBySearchPart2  = "&apikey=1a305a0b17d07430e6f861acc1fc6862&hash=5e7b5ab581c0fbe2540ff6eafb0e64a0"
-	
 	return {
 		store: {
 			
 			characters : [],
 
 			comicsToRender : [],
+
+			comicToRender : {index: 0, redirect:false},
 			
 			favorite : false,
 
@@ -23,7 +20,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 		},
 		actions: {
-
+			// usada para ver todos los favoritos
 			setFavorite : favorite => {
 								
 				setStore({
@@ -31,7 +28,15 @@ const getState = ({ getStore, getActions, setStore }) => {
 				});
 
 			},
+			// usada para saber cual comic renderizar en la view comics
+			setComicToRender : (id,redirect) => {
+								
+				setStore({
+					comicToRender: {index: id, redirect:redirect}
+				});
 
+			},
+			// usada para saber cual personaje es favorito
 			setIsFavorite : (localID,isFavorite) => {
 				
 				let store = getStore();
@@ -49,7 +54,25 @@ const getState = ({ getStore, getActions, setStore }) => {
 				});
 
 			},
+			// usada para saber cual modal debe ser renderizado
+			setShowModal : (localID,showModal) => {
+				
+				let store = getStore();
 
+				let newList = 	store.characters.map((character) => {   
+									if (character.localID === localID) {
+										character.showModal = showModal;
+									}
+
+									return character
+								});
+
+				setStore({
+					characters: newList 
+				});
+
+			},
+			// usada para hacer la busqueda tanto local como el fetch
 			setInputHeroe : newInput => {
 
 				setStore({
@@ -57,7 +80,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				});
 
 			},
-
+			// usada al iniciar para tener los personajes
 			fetchGetCharacters: async () => {
 				
 				const store = getStore();
@@ -92,6 +115,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 							newCharacter["isFavorite"] = false;
 
+							newCharacter["showModal"] = false;
+
 							return newCharacter;
 
 						});
@@ -106,7 +131,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.log(error);
 				}
 			},
-				
+			// usada para buscar personajes segun parametro de busqueda
 			fetchGetCharactersBySearch: async () => {
 			
 				const store = getStore();
@@ -127,8 +152,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 						
 						let responseBodyDATA = responseBody["data"];
 
-						console.log(responseBodyDATA)
-			
 						responseBodyDATA.results.map((character,index) =>{
 							
 							let newCharacter = {}
@@ -144,7 +167,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 							newCharacter["comics"] = character.comics;
 
 							newCharacter["isFavorite"] = false;
-							
+
+							newCharacter["showModal"] = false;
+							// solo almacena si no existe ya en el store
 							let isInStore = store.characters.map( storeCharacter =>{
 								
 								return storeCharacter.id === newCharacter.id
@@ -171,7 +196,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.log(error);
 				}
 			},
-
+			// usado para renderizar lista de comics de cada personaje
 			fetchGetComics: async (url) => {
 				
 				const store = getStore();
@@ -221,6 +246,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.log("something failed");
 					console.log(error);
 				}
+
 			}
 		}
 	};

@@ -1,4 +1,4 @@
-import React, { Fragment, useContext, useState } from "react";
+import React, { Fragment, useContext } from "react";
 import PropTypes from "prop-types";
 import { Card , Icon , Name , Container, Img} from "./styled"
 import { AppContext } from "../../store/appContext.js";
@@ -8,10 +8,15 @@ const CardCharacters = ({localID,name,cover,isFavorite,url}) => {
 
     const { store, actions } = useContext(AppContext);
 
-    const [showModal,setShowModal] = useState(false)
-
     const handelChangeFavorite = (e) => {
         actions.setIsFavorite(localID,!isFavorite)
+    }
+
+    const handelFetchModal = async (e, url, localID) => {
+        
+        await actions.fetchGetComics(url);
+        actions.setShowModal(localID, true);
+        
     }
 
     return (  
@@ -21,10 +26,8 @@ const CardCharacters = ({localID,name,cover,isFavorite,url}) => {
                     
                     <Img 
                         src={cover}
-                        onClick = {e => {
-                            setShowModal(true);
-                            // actions.fetchGetComics(url);
-                        }}
+                        onClick = {e => { handelFetchModal(e,url,localID) }}
+                        
                     />
 
                     { store.characters[localID-1].isFavorite    ?   <Icon className = "star-solid" onClick = {handelChangeFavorite}></Icon>
@@ -33,15 +36,13 @@ const CardCharacters = ({localID,name,cover,isFavorite,url}) => {
                     
                     <Name>{name}</Name>
                     
-                    
-                    {showModal && (
+                    {/* para mostrar el modal de ese personje */}
+                    {store.characters[localID-1].showModal && (
 						<ModalComics
 							nameCharacter={name}
                             
-                            url={url}
-												
 							handleOuterClick={e => {
-								setShowModal(false);
+								actions.setShowModal(localID, false);
 							}}
 						/>
 					)}				
@@ -65,6 +66,5 @@ CardCharacters.propTypes = {
 
 ModalComics.propTypes = {
 	title: PropTypes.string,
-	url: PropTypes.string,
 	handleOuterClick: PropTypes.func
 };

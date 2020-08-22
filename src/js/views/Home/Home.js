@@ -5,9 +5,10 @@ import CardCharacters from "../../component/cardCharacters/CardCharacters"
 import { AllCards , Container } from "./Styled.js"
 
 
-export const Home = () => {
+export const Home = (props) => {
 	const { store, actions } = useContext(AppContext);
  
+	// Usada para mostrar solo los favoritos
 	const charactersToRender = store.characters.filter((character) => {
 		let shouldRender = false;
 		
@@ -18,6 +19,7 @@ export const Home = () => {
 		return shouldRender;
 	});
 
+	// Filtrando resultados para la busqueda en la barra
 	const charactersToRenderBySearch = (charactersToRender) => charactersToRender.filter((character) => {
 		
 		if (store.inputHeroe == "") {
@@ -41,7 +43,7 @@ export const Home = () => {
 			<Container>
 
 				<AllCards>
-									
+					
 					{(store.favorite == false)? (
 					
 						charactersToRenderBySearch(store.characters).map((character) => {   

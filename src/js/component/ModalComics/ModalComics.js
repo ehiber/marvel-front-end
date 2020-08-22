@@ -1,37 +1,62 @@
-import React, { Fragment, useContext, useEffect } from "react"
+import React, { Fragment, useContext } from "react"
 import PropTypes from "prop-types";
 import { AppContext } from "../../store/appContext.js";
+import { Modal, Flex, ContenidoModal, Close, ModalHeader, OneComic, ImgComic, Text} from "./Styled"
 import "../../../styles/modalComics.scss"
+import { Redirect } from "react-router-dom";
 
-const ModalComics = ({ nameCharacter, url, handleOuterClick = () => {} }) =>  {
+const ModalComics = ({ nameCharacter, handleOuterClick = () => {} }) =>  {
 
     const { store, actions } = useContext(AppContext);
 
-    useEffect(() => {
-		
-		console.log("usandome este efecto");
-
-	}, []);        
+    const handleRenderComic = (e,index) =>{
+        
+        actions.setComicToRender(index,true)
+                        
+    }
         
 	return (
 		<Fragment>
-			<div className="modal">
-                <div className = "flex">
-                    <div className = "contenido-modal">
-                        <div className="modal-header flex">
+			<Modal className="modal">
+                <Flex>
+                    <ContenidoModal>
+                        <ModalHeader>
                             <h2>{nameCharacter}</h2>
-                            <div className="close" onClick={e => {handleOuterClick(e)}}>
+                            <Close onClick={e => {handleOuterClick(e);}}>
                                 &times;
-                            </div>
-                        </div>
+                            </Close>
+                        </ModalHeader>
                         <br />
-                        <div className="modal-body">
-                            
+                        <div>
+                            {store.comicsToRender.map((comic,index)=>{
+                                
+                                return (
+                                    
+                                    <Fragment key={Math.random()}>
+                                        <OneComic onClick = {e =>    {handleRenderComic(e,index);}}>
+
+                                            <ImgComic src= {comic.cover} />
+
+                                            <Text>
+
+                                                <h3>{comic.title}</h3>
+
+                                                <p>{comic.description}</p>
+
+                                            </Text>
+
+                                            {store.comicToRender.redirect && <Redirect to= "/comics" />}
+
+                                        </OneComic>
+                                    </Fragment>
+
+                                );
+
+                            })}                            
                         </div>
-                    </div>
-    		    </div>
-            
-            </div>
+                    </ContenidoModal>
+    		    </Flex>
+            </Modal>
 		</Fragment>
 	);
 };
@@ -40,7 +65,6 @@ export default ModalComics;
 
 ModalComics.propTypes = {
 	nameCharacter: PropTypes.string,
-	url: PropTypes.string,
 	handleOuterClick: PropTypes.func
 };
 

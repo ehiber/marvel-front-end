@@ -14,7 +14,7 @@ const App = () => {
           <NavbarMarvel />
             <Switch>
             <Route exact path="/" component={Home} />
-            <Route path="/comics" component={Comics} />
+            <Route exact path="/comics/" component={Comics} />
             <Route render={() => <h1>Not found!</h1>} />
             </Switch>
         </AppContextProvider> 

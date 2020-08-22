@@ -47,6 +47,11 @@ export const Img = styled.img`
     border-radius : 3px;
     width : 250px;
     height : 380px;
+    
+    :hover{
+        cursor: pointer;
+    }
+
     @media (max-width: 280px) {
         width : 200
         height : 330px;
