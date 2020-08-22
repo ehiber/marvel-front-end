@@ -89,6 +89,7 @@ const webpackConfig ={
     plugins:[
         new CleanWebpackPlugin(),
         new HtmlWebPackPlugin({
+            favicon: 'Marvel.ico',
             template:"./public/index.html",
             filename:"./index.html",
         }),
