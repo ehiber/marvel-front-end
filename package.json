@@ -1,7 +1,10 @@
 {
   "name": "marvel-front-end",
   "version": "1.0.0",
-  "description": "",
+  "engines": {
+    "node": "10.x"
+  },
+  "description": "Un genial buscador",
   "main": "index.js",
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.30",
