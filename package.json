@@ -44,7 +44,7 @@
   },
   "browserslist": "> 0.25%, not dead, not ie 11",
   "scripts": {
-    "start": "webpack-dev-server --mode development",
+    "start": "node src/index.js",
     "build": "webpack --mode production"
   },
   "keywords": [],
