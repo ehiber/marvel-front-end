@@ -1,6 +1,6 @@
 import React, { Fragment, useContext , useEffect } from "react";
 import { AppContext } from "../../store/appContext.js";
-import { Comic, FullDescription , Container, Img} from "./styled"
+import { Comic, FullDescription , Container, Img} from "./Styled.js"
 
 
 const Comics = (props) => {
